@@ -3,3 +3,4 @@ GT_TEST_SET = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scen
 TRAIN_SET_JSON = "train_set_processed.json"
 TEST_SET_JSON = "test_set_processed.json"
 SAMPLE_IMAGE = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/test/image/0000000.jpg"
+SAMPLE_OBJECT = "/storage/group/dataset_mirrors/01_incoming/3DFront3D-FUTURE-model/3062da49-9d90-3894-8c6a-207b131a7f1f"

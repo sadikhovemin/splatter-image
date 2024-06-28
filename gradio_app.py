@@ -4,17 +4,18 @@ import numpy as np
 
 import os
 from omegaconf import OmegaConf
-from PIL import Image 
+from PIL import Image
 
 from utils.app_utils import (
-    remove_background, 
-    resize_foreground, 
+    remove_background,
+    resize_foreground,
     set_white_background,
     resize_to_128,
     to_tensor,
     get_source_camera_v2w_rmo_and_quats,
     get_target_cameras,
-    export_to_obj)
+    export_to_obj,
+)
 
 import imageio
 
@@ -27,21 +28,22 @@ import rembg
 
 from huggingface_hub import hf_hub_download
 
+
 @torch.no_grad()
 def main():
 
-    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     device = torch.device("cuda:0")
     torch.cuda.set_device(device)
 
     model_cfg = OmegaConf.load(
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 
-                    "gradio_config.yaml"
-                    ))
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "gradio_config.yaml")
+    )
 
-    model_path = hf_hub_download(repo_id="szymanowiczs/splatter-image-multi-category-v1", 
-                                filename="model_latest.pth")
+    model_path = hf_hub_download(
+        repo_id="szymanowiczs/splatter-image-multi-category-v1",
+        filename="model_latest.pth",
+    )
 
     model = GaussianSplatPredictor(model_cfg)
 
@@ -70,14 +72,16 @@ def main():
         image = resize_to_128(image)
         return image
 
-    ply_out_path = f'./mesh.ply'
+    ply_out_path = f"./mesh.ply"
 
     def reconstruct_and_export(image):
         """
         Passes image through model, outputs reconstruction in form of a dict of tensors.
         """
         image = to_tensor(image).to(device)
-        view_to_world_source, rot_transform_quats = get_source_camera_v2w_rmo_and_quats()
+        view_to_world_source, rot_transform_quats = (
+            get_source_camera_v2w_rmo_and_quats()
+        )
         view_to_world_source = view_to_world_source.to(device)
         rot_transform_quats = rot_transform_quats.to(device)
 
@@ -86,27 +90,43 @@ def main():
             view_to_world_source,
             rot_transform_quats,
             None,
-            activate_output=False)
+            activate_output=False,
+        )
 
-        reconstruction = {k: v[0].contiguous() for k, v in reconstruction_unactivated.items()}
+        reconstruction = {
+            k: v[0].contiguous() for k, v in reconstruction_unactivated.items()
+        }
         reconstruction["scaling"] = model.scaling_activation(reconstruction["scaling"])
         reconstruction["opacity"] = model.opacity_activation(reconstruction["opacity"])
 
         # render images in a loop
-        world_view_transforms, full_proj_transforms, camera_centers = get_target_cameras()
-        background = torch.tensor([1, 1, 1] , dtype=torch.float32, device=device)
+        world_view_transforms, full_proj_transforms, camera_centers = (
+            get_target_cameras()
+        )
+        background = torch.tensor([1, 1, 1], dtype=torch.float32, device=device)
         loop_renders = []
-        t_to_512 = torchvision.transforms.Resize(512, interpolation=torchvision.transforms.InterpolationMode.NEAREST)
-        for r_idx in range( world_view_transforms.shape[0]):
-            image = render_predicted(reconstruction,
-                                        world_view_transforms[r_idx].to(device),
-                                        full_proj_transforms[r_idx].to(device), 
-                                        camera_centers[r_idx].to(device),
-                                        background,
-                                        model_cfg,
-                                        focals_pixels=None)["render"]
+        t_to_512 = torchvision.transforms.Resize(
+            512, interpolation=torchvision.transforms.InterpolationMode.NEAREST
+        )
+        for r_idx in range(world_view_transforms.shape[0]):
+            image = render_predicted(
+                reconstruction,
+                world_view_transforms[r_idx].to(device),
+                full_proj_transforms[r_idx].to(device),
+                camera_centers[r_idx].to(device),
+                background,
+                model_cfg,
+                focals_pixels=None,
+            )["render"]
             image = t_to_512(image)
-            loop_renders.append(torch.clamp(image * 255, 0.0, 255.0).detach().permute(1, 2, 0).cpu().numpy().astype(np.uint8))
+            loop_renders.append(
+                torch.clamp(image * 255, 0.0, 255.0)
+                .detach()
+                .permute(1, 2, 0)
+                .cpu()
+                .numpy()
+                .astype(np.uint8)
+            )
         loop_out_path = os.path.join(os.path.dirname(ply_out_path), "loop.mp4")
         imageio.mimsave(loop_out_path, loop_renders, fps=25)
         # export reconstruction to ply
@@ -126,7 +146,6 @@ def main():
         ply_out_path, loop_out_path = reconstruct_and_export(np.array(preprocessed))
         return preprocessed, ply_out_path, loop_out_path
 
-
     with gr.Blocks(css=css) as demo:
         gr.Markdown(
             """
@@ -139,7 +158,7 @@ def main():
             The 3D viewer will render a .ply object exported from the 3D Gaussians, which is only an approximation.
             For best results run the demo locally and render locally with Gaussian Splatting - to do so, clone the [main repository](https://github.com/szymanowiczs/splatter-image).
             """
-            )
+        )
         with gr.Row(variant="panel"):
             with gr.Column():
                 with gr.Row():
@@ -150,28 +169,32 @@ def main():
                         type="pil",
                         elem_id="content_image",
                     )
-                    processed_image = gr.Image(label="Processed Image", interactive=False)
+                    processed_image = gr.Image(
+                        label="Processed Image", interactive=False
+                    )
                 with gr.Row():
                     with gr.Group():
                         preprocess_background = gr.Checkbox(
                             label="Remove Background", value=True
                         )
                 with gr.Row():
-                    submit = gr.Button("Generate", elem_id="generate", variant="primary")
+                    submit = gr.Button(
+                        "Generate", elem_id="generate", variant="primary"
+                    )
 
-                with gr.Row(variant="panel"): 
+                with gr.Row(variant="panel"):
                     gr.Examples(
                         examples=[
-                            './demo_examples/01_bigmac.png',
-                            './demo_examples/02_hydrant.jpg',
-                            './demo_examples/03_spyro.png',
-                            './demo_examples/04_lysol.png',
-                            './demo_examples/05_pinapple_bottle.png',
-                            './demo_examples/06_unsplash_broccoli.png',
-                            './demo_examples/07_objaverse_backpack.png',
-                            './demo_examples/08_unsplash_chocolatecake.png',
-                            './demo_examples/09_realfusion_cherry.png',
-                            './demo_examples/10_triposr_teapot.png'
+                            "./demo_examples/01_bigmac.png",
+                            "./demo_examples/02_hydrant.jpg",
+                            "./demo_examples/03_spyro.png",
+                            "./demo_examples/04_lysol.png",
+                            "./demo_examples/05_pinapple_bottle.png",
+                            "./demo_examples/06_unsplash_broccoli.png",
+                            "./demo_examples/07_objaverse_backpack.png",
+                            "./demo_examples/08_unsplash_chocolatecake.png",
+                            "./demo_examples/09_realfusion_cherry.png",
+                            "./demo_examples/10_triposr_teapot.png",
                         ],
                         inputs=[input_image],
                         cache_examples=False,
@@ -183,11 +206,14 @@ def main():
                 with gr.Row():
                     with gr.Tab("Reconstruction"):
                         with gr.Column():
-                            output_video = gr.Video(value=None, width=512, label="Rendered Video", autoplay=True)
+                            output_video = gr.Video(
+                                value=None,
+                                width=512,
+                                label="Rendered Video",
+                                autoplay=True,
+                            )
                             output_model = gr.Model3D(
-                                height=512,
-                                label="Output Model",
-                                interactive=False
+                                height=512, label="Output Model", interactive=False
                             )
 
         gr.Markdown(
@@ -225,6 +251,7 @@ def main():
 
     demo.queue(max_size=1)
     demo.launch()
+
 
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@ general:
 data:
   znear: 0.8
   zfar: 3.2
-  category: objaverse
+  category: front3d
   white_background: true
   origin_distances: false
   training_resolution: 128

@@ -13,23 +13,22 @@ from .shared_dataset import SharedDataset
 from utils.graphics_utils import getProjectionMatrix, fov2focal
 from utils.camera_utils import get_loop_cameras
 
-OBJAVERSE_ROOT = (
-    "/usr/prakt/s0091/views_release_simplified"  # Change this to your data directory
-)
-OBJAVERSE_LVIS_ANNOTATION_PATH = "/usr/prakt/s0091/annotations_filtered_simplified.json"  # Change this to your filtering .json path
-assert OBJAVERSE_ROOT is not None, "Update dataset path"
-assert OBJAVERSE_LVIS_ANNOTATION_PATH is not None, "Update filtering .json path"
+FRONT3D_ROOT = "/usr/prakt/s0091/front-3d-simplified"  # Update this to your actual dataset directory
+FRONT3D_METADATA_PATH = "/usr/prakt/s0091/front3d-annotations-simplified.json"  # Update this to your actual metadata file path
+
+assert FRONT3D_ROOT is not None, "Update dataset path"
+assert FRONT3D_METADATA_PATH is not None, "Update filtering .json path"
 
 
-class ObjaverseDataset(SharedDataset):
+class Front3DDataset(SharedDataset):
     def __init__(self, cfg, dataset_name="train") -> None:
 
-        super(ObjaverseDataset).__init__()
+        super(Front3DDataset).__init__()
         self.cfg = cfg
-        self.root_dir = OBJAVERSE_ROOT
+        self.root_dir = FRONT3D_ROOT
 
         # load the file names
-        with open(OBJAVERSE_LVIS_ANNOTATION_PATH) as f:
+        with open(FRONT3D_METADATA_PATH) as f:
             self.paths = json.load(f)
 
         # split the dataset for training and validation
@@ -74,6 +73,7 @@ class ObjaverseDataset(SharedDataset):
         """
         Load the images, camera matrices and projection matrices for a given object
         """
+
         bg_color = (
             torch.tensor([1.0, 1.0, 1.0], dtype=torch.float32).unsqueeze(1).unsqueeze(2)
         )
@@ -92,20 +92,36 @@ class ObjaverseDataset(SharedDataset):
             indexes = torch.randperm(len(paths))[:num_views]
             indexes = torch.cat([indexes[: self.cfg.data.input_images], indexes], dim=0)
 
+        print("HERE INDEXING WORKED")
+        print("PATHS ARE ", paths)
+        print("INDEXES ARE ", indexes)
+        print("path at index", paths[indexes[0]])
+
         # load the images and cameras
         for i in indexes:
             # read to [0, 1] FloatTensor and resize to training_resolution
             img = Image.open(paths[i])
             # resize to the training resolution
+            print("line 105 worked")
             img = torchvision.transforms.functional.resize(
                 img,
                 self.cfg.data.training_resolution,
                 interpolation=torchvision.transforms.InterpolationMode.LANCZOS,
             )
+
+            print("line 112 worked")
             img = torchvision.transforms.functional.pil_to_tensor(img) / 255.0
+            print("line 114 worked")
             # set background
-            print("img shape", img.shape)
+            print("img.shape", img.shape)
+            print(":3", img[:3, ...].shape)
+            print("3:", img[3:, ...].shape)
             fg_masks.append(img[3:, ...])
+            print("line 117 worked")
+            print(
+                "printing the computation: ",
+                img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]),
+            )
             imgs.append(img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]))
 
             print("PATHS[i] IS ", paths[i])
@@ -247,7 +263,9 @@ class ObjaverseDataset(SharedDataset):
         paths = glob.glob(filename + "/*.png")
 
         if self.dataset_name == "vis":
-            images_and_camera_poses = self.load_loop(paths, 200)
+            images_and_camera_poses = self.load_loop(
+                paths, 200
+            )  # This case is not handeled currently
         else:
             if self.dataset_name == "train":
                 num_views = self.imgs_per_obj_train

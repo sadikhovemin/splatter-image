@@ -6,7 +6,7 @@ import trimesh
 
 # Load the .obj model
 # obj_file = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-model/3062da49-9d90-3894-8c6a-207b131a7f1f/normalized_model.obj"
-obj_file = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-model/551dfab5-0210-4a1f-b213-8cc230f44d3b/normalized_model.obj"
+obj_file = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-model/c1cdca71-d544-4300-8351-f4034eb140b7/normalized_model.obj"
 scene = pywavefront.Wavefront(obj_file, collect_faces=True)
 vertices = np.array(scene.vertices)
 
@@ -25,14 +25,9 @@ vertices = np.array(scene.vertices)
 
 matrix = np.array(
     [
-        [-0.97067571, 0.0, -0.24039274, -0.11704185],
-        [
-            0.0,
-            1.0,
-            0.0,
-            -0.9,
-        ],
-        [0.24039274, 0.0, -0.97067571, -2.75625348],
+        [0.97244893, 0.0, 0.23307221, -0.20811252],
+        [0.01788679, 0.99705087, -0.07462918, -0.87410725],
+        [-0.23238484, 0.07674355, 0.96958104, -2.40567632],
         [0.0, 0.0, 0.0, 1.0],
     ]
 )
@@ -60,7 +55,7 @@ plt.plot(new_vertices[:, 0], new_vertices[:, 1], "o")
 plt.title("Transformed Vertices")
 
 # Save the figure
-plt.savefig("/usr/prakt/s0091/github/splatter-image/somethingsaved_figure.png")
+plt.savefig("/usr/prakt/s0091/github/splatter-image/pose_figure.png")
 plt.close()
 
 
@@ -92,7 +87,5 @@ plt.subplot(2, 2, 3)
 plt.plot(original_vertices[:, 0], original_vertices[:, 1], "o")
 plt.title("Recovered Vertices M")
 
-plt.savefig(
-    "/usr/prakt/s0091/github/splatter-image/verification_figure_for_somethingsaved.png"
-)
+plt.savefig("/usr/prakt/s0091/github/splatter-image/verification_figure_for_pose.png")
 plt.close()

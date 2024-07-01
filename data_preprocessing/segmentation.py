@@ -17,7 +17,7 @@ def apply_segmentation_mask(image_path, mask):
 
     # Apply the mask: Multiply the mask with each color channel of the image
     masked_image_array = np.zeros_like(image_array)
-    for i in range(3):  # Assuming RGB
+    for i in range(3):
         masked_image_array[:, :, i] = image_array[:, :, i] * mask
 
     # Convert the masked image array back to a PIL Image
@@ -30,11 +30,11 @@ def process_first_50_annotations(json_path, image_directory, output_directory):
     annotation_ids = coco.getAnnIds()[:50]  # Get IDs of the first 50 annotations
 
     for ann_id in annotation_ids:
-        ann = coco.loadAnns(ann_id)[0]  # Assuming each ID returns a single annotation
+        ann = coco.loadAnns(ann_id)[0]
         img_id = ann["image_id"]
         img_info = coco.loadImgs(img_id)[0]
         mask = coco.annToMask(ann)
-        model_id = ann["model_id"]  # Adjust this if model_id is stored differently
+        model_id = ann["model_id"]
 
         # Construct image path
         image_path = f"{image_directory}/{img_info['file_name']}.jpg"

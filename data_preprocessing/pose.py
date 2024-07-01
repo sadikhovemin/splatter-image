@@ -39,9 +39,7 @@ def save_camera_parameters(json_path, output_directory):
 
     for ann_id in annotation_ids:
         ann = coco.loadAnns(ann_id)[0]
-        model_id = ann[
-            "model_id"
-        ]  # Ensure 'model_id' is correct as per your JSON structure
+        model_id = ann["model_id"]
 
         # Directory for storing the camera parameters
         model_dir = os.path.join(output_directory, str(model_id))

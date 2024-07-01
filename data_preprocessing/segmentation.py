@@ -2,7 +2,7 @@ from pycocotools.coco import COCO
 import numpy as np
 from PIL import Image
 import os
-from settings import GT_TEST_SET
+from settings import GT_TRAIN_SET
 
 
 def apply_segmentation_mask(image_path, mask):
@@ -63,5 +63,5 @@ if __name__ == "__main__":
         "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/test/image"
     )
     output_directory = "/usr/prakt/s0091/github/splatter-image/processed_front3D"
-    json_path = GT_TEST_SET
+    json_path = GT_TRAIN_SET
     process_annotations(json_path, image_directory, output_directory)

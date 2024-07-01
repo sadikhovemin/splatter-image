@@ -1,7 +1,7 @@
 from pycocotools.coco import COCO
 import numpy as np
 import os
-from settings import GT_TEST_SET
+from settings import GT_TRAIN_SET
 
 
 def save_camera_parameters(json_path, output_directory):
@@ -43,5 +43,5 @@ def save_camera_parameters(json_path, output_directory):
 
 if __name__ == "__main__":
     output_directory = "/usr/prakt/s0091/github/splatter-image/processed_front3D"
-    json_path = GT_TEST_SET
+    json_path = GT_TRAIN_SET
     save_camera_parameters(json_path, output_directory)

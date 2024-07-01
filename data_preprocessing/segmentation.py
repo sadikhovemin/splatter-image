@@ -25,7 +25,7 @@ def apply_segmentation_mask(image_path, mask):
     return masked_image
 
 
-def process_first_50_annotations(json_path, image_directory, output_directory):
+def process_annotations(json_path, image_directory, output_directory):
     coco = COCO(json_path)
     annotation_ids = coco.getAnnIds()[:50]  # Get IDs of the first 50 annotations
 
@@ -64,4 +64,4 @@ if __name__ == "__main__":
     )
     output_directory = "/usr/prakt/s0091/github/splatter-image/processed_front3D"
     json_path = GT_TEST_SET
-    process_first_50_annotations(json_path, image_directory, output_directory)
+    process_annotations(json_path, image_directory, output_directory)

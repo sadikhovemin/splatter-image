@@ -1,30 +1,3 @@
-# import json
-# import numpy as np
-
-# json_file = "/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/GT/test_set.json"
-# with open(json_file, "r") as file:
-#     data = json.load(file)
-#     pose = data["annotations"][1][
-#         "pose"
-#     ]  # Adjust this according to the actual JSON structure
-
-# # Extract rotation and translation from the pose data
-# R = np.array(pose["rotation"])
-# T = np.array(pose["translation"])
-
-
-# # Create a 4x4 transformation matrix
-# transformation_matrix = np.eye(4)
-# transformation_matrix[:3, :3] = R
-# transformation_matrix[:3, 3] = T
-
-# # Save as a .npy file
-# np.save(
-#     "/usr/prakt/s0091/github/splatter-image/transformation_matrix.npy",
-#     transformation_matrix,
-# )
-
-
 from pycocotools.coco import COCO
 import numpy as np
 import os

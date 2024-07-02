@@ -850,7 +850,7 @@ def render_images(
         if model_id is None:
             continue
 
-        object_file = f"/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-model/{model_id}/raw_model.obj"
+        object_file = f"/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-model/{model_id}/normalized_model.obj"
         model_dir = os.path.join(output_dir, str(model_id))
         os.makedirs(model_dir, exist_ok=True)
         output_path = os.path.join(output_dir, model_dir)

@@ -1,7 +1,7 @@
 import numpy as np
 
 # file_path = "/usr/prakt/s0091/github/splatter-image/renders_3/images/000.npy"
-file_path = "/usr/prakt/s0091/github/splatter-image/processed_front3D/7ae94335-929c-41f6-a573-3e433f10afca/000.npy"
+file_path = "processed_front3D/3ffaa0a4-3ff5-364e-afec-0835c098d1ff/001.npy"
 # file_path = (
 # "/usr/prakt/s0091/front-3d-simplified/3062da49-9d90-3894-8c6a-207b131a7f1f/009.npy"
 # )

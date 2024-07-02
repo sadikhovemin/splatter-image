@@ -932,6 +932,6 @@ if __name__ == "__main__":
     render_images(
         num_renders=12,
         only_northern_hemisphere=False,
-        json_path="/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/GT/test_set.json",
+        json_path="/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/GT/train_set.json",
         output_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d",
     )

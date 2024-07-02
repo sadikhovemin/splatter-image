@@ -13,8 +13,10 @@ from .shared_dataset import SharedDataset
 from utils.graphics_utils import getProjectionMatrix, fov2focal
 from utils.camera_utils import get_loop_cameras
 
-FRONT3D_ROOT = "/usr/prakt/s0091/front-3d-simplified"  # Update this to your actual dataset directory
-FRONT3D_METADATA_PATH = "/usr/prakt/s0091/front3d-annotations-simplified.json"  # Update this to your actual metadata file path
+FRONT3D_ROOT = (
+    "/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d"
+)
+FRONT3D_METADATA_PATH = "/usr/prakt/s0091/github/splatter-image/processed_front3D.json"
 
 assert FRONT3D_ROOT is not None, "Update dataset path"
 assert FRONT3D_METADATA_PATH is not None, "Update filtering .json path"
@@ -73,7 +75,6 @@ class Front3DDataset(SharedDataset):
         """
         Load the images, camera matrices and projection matrices for a given object
         """
-
         bg_color = (
             torch.tensor([1.0, 1.0, 1.0], dtype=torch.float32).unsqueeze(1).unsqueeze(2)
         )
@@ -92,36 +93,20 @@ class Front3DDataset(SharedDataset):
             indexes = torch.randperm(len(paths))[:num_views]
             indexes = torch.cat([indexes[: self.cfg.data.input_images], indexes], dim=0)
 
-        print("HERE INDEXING WORKED")
-        print("PATHS ARE ", paths)
-        print("INDEXES ARE ", indexes)
-        print("path at index", paths[indexes[0]])
-
         # load the images and cameras
         for i in indexes:
             # read to [0, 1] FloatTensor and resize to training_resolution
             img = Image.open(paths[i])
             # resize to the training resolution
-            print("line 105 worked")
             img = torchvision.transforms.functional.resize(
                 img,
                 self.cfg.data.training_resolution,
                 interpolation=torchvision.transforms.InterpolationMode.LANCZOS,
             )
-
-            print("line 112 worked")
             img = torchvision.transforms.functional.pil_to_tensor(img) / 255.0
-            print("line 114 worked")
             # set background
-            print("img.shape", img.shape)
-            print(":3", img[:3, ...].shape)
-            print("3:", img[3:, ...].shape)
+            print("img shape", img.shape)
             fg_masks.append(img[3:, ...])
-            print("line 117 worked")
-            print(
-                "printing the computation: ",
-                img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]),
-            )
             imgs.append(img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]))
 
             print("PATHS[i] IS ", paths[i])

@@ -105,12 +105,8 @@ class Front3DDataset(SharedDataset):
             )
             img = torchvision.transforms.functional.pil_to_tensor(img) / 255.0
             # set background
-            print("img shape", img.shape)
             fg_masks.append(img[3:, ...])
             imgs.append(img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]))
-
-            print("PATHS[i] IS ", paths[i])
-            print("len(indexes)", len(indexes))
 
             # .npy files store world-to-camera matrix in column major order
             w2c_cmo = torch.tensor(

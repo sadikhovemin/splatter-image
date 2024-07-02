@@ -17,6 +17,12 @@ OBJAVERSE_ROOT = (
     "/usr/prakt/s0091/views_release_simplified"  # Change this to your data directory
 )
 OBJAVERSE_LVIS_ANNOTATION_PATH = "/usr/prakt/s0091/annotations_filtered_simplified.json"  # Change this to your filtering .json path
+
+FRONT3D_ROOT = (
+    "/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d"
+)
+FRONT3D_METADATA_PATH = "/usr/prakt/s0091/github/splatter-image/processed_front3D.json"
+
 assert OBJAVERSE_ROOT is not None, "Update dataset path"
 assert OBJAVERSE_LVIS_ANNOTATION_PATH is not None, "Update filtering .json path"
 
@@ -104,12 +110,8 @@ class ObjaverseDataset(SharedDataset):
             )
             img = torchvision.transforms.functional.pil_to_tensor(img) / 255.0
             # set background
-            print("img shape", img.shape)
             fg_masks.append(img[3:, ...])
             imgs.append(img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]))
-
-            print("PATHS[i] IS ", paths[i])
-            print("len(indexes)", len(indexes))
 
             # .npy files store world-to-camera matrix in column major order
             w2c_cmo = torch.tensor(

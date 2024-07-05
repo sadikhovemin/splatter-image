@@ -832,7 +832,7 @@ def render_object(
         np.save(rt_matrix_path, rt_matrix)
 
 
-def render_images(
+def render_front3d(
     num_renders: int,
     only_northern_hemisphere: bool,
     json_path: str,
@@ -860,6 +860,27 @@ def render_images(
             num_renders,
             only_northern_hemisphere,
             output_path,
+        )
+
+
+def render_scannetpp(
+    num_renders: int,
+    only_northern_hemisphere: bool,
+    input_dir: str,
+    output_dir: str,
+) -> None:
+
+    assert os.path.exists(input_dir), "Input directory does not exist."
+
+    for obj in os.listdir(input_dir):
+        obj_path = os.path.join(input_dir, obj)
+
+        # Render the images
+        render_object(
+            obj_path,
+            num_renders,
+            only_northern_hemisphere,
+            output_dir,
         )
 
 
@@ -929,9 +950,27 @@ if __name__ == "__main__":
     )
 
     # Render the images
-    render_images(
+    # render_front3d(
+    #     num_renders=12,
+    #     only_northern_hemisphere=False,
+    #     json_path="/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/GT/train_set.json",
+    #     output_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d",
+    # )
+
+    # render_scannetpp(
+    #     num_renders=12,
+    #     only_northern_hemisphere=False,
+    #     input_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_converted_obj",
+    #     output_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_rendered",
+    # )
+
+    render_object(
+        object_file="/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_converted_obj/output_mesh_chair_47.obj",
         num_renders=12,
         only_northern_hemisphere=False,
-        json_path="/storage/group/dataset_mirrors/01_incoming/3DFront/3D-FUTURE-scene/GT/train_set.json",
-        output_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d",
+        output_dir="/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_rendered",
     )
+
+
+# Need to normalize the obj first
+# Need to figure out why the color is lost (I think it is lost during conversion???)

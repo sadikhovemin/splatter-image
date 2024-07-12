@@ -12,7 +12,11 @@ from .objaverse import ObjaverseDataset
 
 from utils.graphics_utils import getProjectionMatrix
 
-GSO_ROOT = "/usr/prakt/s0091/github/splatter-image/data_preprocessing/render-front3d"
+# GSO_ROOT = (
+#     "/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_rendered"
+# )
+
+GSO_ROOT = "data_preprocessing/scannetpp_rendered"
 assert GSO_ROOT is not None, "Update path of the dataset"
 
 
@@ -37,6 +41,8 @@ class GSODataset(ObjaverseDataset):
             fovX=cfg.data.fov * 2 * np.pi / 360,
             fovY=cfg.data.fov * 2 * np.pi / 360,
         ).transpose(0, 1)
+
+        print("PATH OF THE DATASET FOR EVALUATION", GSO_ROOT)
 
         self.image_side_target = self.cfg.data.training_resolution
         self.opengl_to_colmap = torch.tensor(

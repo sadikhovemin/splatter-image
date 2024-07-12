@@ -352,8 +352,8 @@ def main(
         if dataset_name == "gso":
             # GSO model must have been trained on objaverse
             assert training_cfg.data.category == "objaverse", "Model-dataset mismatch"
-        else:
-            assert training_cfg.data.category == dataset_name, "Model-dataset mismatch"
+        # else:
+        #     assert training_cfg.data.category == dataset_name, "Model-dataset mismatch"
 
     # load model
     model = GaussianSplatPredictor(training_cfg)

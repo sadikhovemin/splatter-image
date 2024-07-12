@@ -12,11 +12,10 @@ from .objaverse import ObjaverseDataset
 
 from utils.graphics_utils import getProjectionMatrix
 
-# GSO_ROOT = (
-#     "/usr/prakt/s0091/github/splatter-image/data_preprocessing/scannetpp_rendered"
-# )
 
-GSO_ROOT = "data_preprocessing/scannetpp_rendered"
+# GSO_ROOT = "data_preprocessing/scannetpp_rendered"
+GSO_ROOT = "/storage/group/dataset_mirrors/01_incoming/3DFront/3DFront_test"
+
 assert GSO_ROOT is not None, "Update path of the dataset"
 
 

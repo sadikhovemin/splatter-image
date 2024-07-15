@@ -158,8 +158,6 @@ def evaluate_dataset(model, dataloader, device, model_cfg, save_vis=0, out_folde
                     ssim_all_renders_novel.append(ssim)
                     lpips_all_renders_novel.append(lpips)
 
-        print("psnr_all_examples_cond", psnr_all_examples_cond)
-        print("ssim_all_examples_cond", ssim_all_examples_cond)
         print("psnr_all_renders_novel: ", psnr_all_renders_novel)
         print("lpips_all_renders_novel: ", lpips_all_renders_novel)
 
@@ -195,6 +193,15 @@ def evaluate_dataset(model, dataloader, device, model_cfg, save_vis=0, out_folde
                 + str(lpips_all_examples_novel[-1])
                 + "\n"
             )
+
+    print("-------------------------------------------------")
+    print("psnr_all_examples_cond", psnr_all_examples_cond)
+    print("ssim_all_examples_cond", ssim_all_examples_cond)
+    print("lpips_all_examples_cond", lpips_all_examples_cond)
+    print("psnr_all_examples_novel", psnr_all_examples_novel)
+    print("ssim_all_examples_novel", ssim_all_examples_novel)
+    print("lpips_all_examples_novel", lpips_all_examples_novel)
+    print("-------------------------------------------------")
 
     scores = {
         "PSNR_cond": sum(psnr_all_examples_cond) / len(psnr_all_examples_cond),

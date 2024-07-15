@@ -109,6 +109,14 @@ class ObjaverseDataset(SharedDataset):
                 interpolation=torchvision.transforms.InterpolationMode.LANCZOS,
             )
             img = torchvision.transforms.functional.pil_to_tensor(img) / 255.0
+            img = torchvision.transforms.functional.resize(img, (128, 128))
+
+            if img.shape[0] == 3:
+                alpha_channel = torch.ones(
+                    1, img.shape[1], img.shape[2], dtype=torch.float32
+                )
+                img = torch.cat((img, alpha_channel), dim=0)
+
             # set background
             fg_masks.append(img[3:, ...])
             imgs.append(img[:3, ...] * img[3:, ...] + bg_color * (1 - img[3:, ...]))
